@@ -1,0 +1,271 @@
+MSDA 607 - Week 2 Hands On Labs
+
+1.	Which destination in the flights database is the furthest distance away?
+
+select count(*) from flights – returned 336776 
+select origin,dest from flights order by distance desc
+
+	Origin is JFK and Destination is NHL  4983 miles
+
+
+2.	What are the different numbers of engines in the planes table? For each number of engines, which aircraft have the most number of seats?
+
+select distinct(engine) from planes
+
+"Reciprocating"
+"4 Cycle"
+"Turbo-shaft"
+"Turbo-fan"
+"Turbo-jet"
+"Turbo-prop"
+
+	select max(seats), engine from planes group by engine order by max(seats) desc
+	output is :
+
+450;"Turbo-jet"
+400;"Turbo-fan"
+102;"Reciprocating"
+14;"Turbo-shaft"
+10;"Turbo-prop"
+4;"4 Cycle"
+
+3.	What weather conditions are associated with New York City departure delays?
+
+As per IATA, the new York city has 
+New York, NY - All airports (NYC)
+New York, NY - Kennedy (JFK)
+New York, NY - La Guardia (LGA)
+
+select * from weather where origin='JFK' or origin='LGA' are the weather conditions
+
+Result set is:
+"JFK";2013;2;18;4;17.96;-0.94;42.69;290;29.92028;34.4316598184;0;1016.2;10
+"JFK";2013;2;20;19;32;8.06;36.03;280;26.46794;30.4587759932;0;1011.2;10
+"JFK";2013;7;2;11;71.6;69.8;94.06;180;11.5078;13.242946084;0;;0.5
+"JFK";2013;7;2;13;71.6;69.8;94.06;190;10.35702;11.9186514756;0;;1
+"JFK";2013;7;31;6;71.06;55.04;56.93;320;8.05546;9.2700622588;0;1020.4;10
+"JFK";2013;9;2;20;75.2;73.4;94.14;200;4.60312;5.2971784336;0;;4
+"JFK";2013;10;23;10;48.92;39.02;68.51;60;4.60312;5.2971784336;0;1008.1;10
+"JFK";2013;10;23;11;48.92;39.02;68.51;40;4.60312;5.2971784336;0;1008.5;10
+"JFK";2013;12;17;5;26.96;10.94;50.34;40;4.60312;5.2971784336;0;1023.9;10
+"LGA";2013;8;22;22;75.92;66.92;73.68;210;8.05546;9.2700622588;0;1011.9;10
+
+
+4.	Are older planes more likely to be delayed?
+
+	This may not be the case – see below
+
+	select * from planes order by year asc give output as below
+
+"N381AA";1956;"Fixed wing multi engine";"DOUGLAS";"DC-7BF";4;102;232;"Reciprocating"
+"N201AA";1959;"Fixed wing single engine";"CESSNA";"150";1;2;90;"Reciprocating"
+"N567AA";1959;"Fixed wing single engine";"DEHAVILLAND";"OTTER DHC-3";1;16;95;"Reciprocating"
+"N378AA";1963;"Fixed wing single engine";"CESSNA";"172E";1;4;105;"Reciprocating"
+"N575AA";1963;"Fixed wing single engine";"CESSNA";"210-5(205)";1;6;;"Reciprocating"
+"N14629";1965;"Fixed wing multi engine";"BOEING";"737-524";2;149;;"Turbo-fan"
+"N615AA";1967;"Fixed wing multi engine";"BEECH";"65-A90";2;9;202;"Turbo-prop"
+"N425AA";1968;"Fixed wing single engine";"PIPER";"PA-28-180";1;4;107;"Reciprocating"
+"N383AA";1972;"Fixed wing multi engine";"BEECH";"E-90";2;10;;"Turbo-prop"
+"N364AA";1973;"Fixed wing multi engine";"CESSNA";"310Q";2;6;167;"Reciprocating"
+"N840MQ";1974;"Fixed wing multi engine";"CANADAIR LTD";"CF-5D";4;2;;"Turbo-jet"
+"N508AA";1975;"Rotorcraft";"BELL";"206B";1;5;112;"Turbo-shaft"
+
+The oldest flight is 1956
+
+select t1.dep_delay,t1.tailnum, t2.year from flights t1, planes t2 where t1.tailnum=t2.tailnum order by t1.dep_delay
+
+gives output as 
+
+-43;"N592JB";2004
+-33;"N612DL";1985
+-32;"N825AS";1997
+-30;"N934DL";1989
+-27;"N208FR";2011
+-26;"N711MQ";1976
+-25;"N13994";2000
+-24;"N531JB";
+-24;"N929XJ";2008
+-24;"N8747B";2003
+-23;"N29906";2001
+-23;"N800AY";2004
+-23;"N190JB";2005
+-23;"N279JB";2007
+
+43 hrs of delay comes from 2004 year flight and so not the old file 
+
+
+5.	Ask (and if possible answer) a question that also requires joining information from two or more tables in the flights database, and/or assumes that additional information can be collected in advance of answering your question. 
+
+	Require constraints such as primary key and foreign key.
+============================================
+
+MSDA 607 - Week 2 Hands On Labs
+
+These ungraded hands-on-lab will help you build your skills working with combining information from multiple tables. Solutions to all problems are immediately available, but you’ll learn the material more durably if you attempt each problem before consulting its solution.
+
+All of the queries use tables in the flights database. You may find the data descriptions here helpful:
+	http://cran.r-project.org/web/packages/nycflights13/nycflights13.pdf
+
+
+1.	Write a SELECT statement that returns all of the rows and columns in the planes table
+
+SELECT tailnum, year, type, manufacturer, model, engines, seats, speed, engine
+ FROM planes;
+
+2.	Using the weather table, concatenate the year, month, and day columns to display a date in the form "3/17/2013"
+
+SELECT concat(month,'/',day,'/',year)
+  FROM weather;
+
+3.	Order by planes table by number of seats, in descending order. For your reference, here are the first few rows of the resultset…
+SELECT tailnum, year, type, manufacturer, model, engines, seats, speed, engine
+  FROM planes
+  ORDER By seats DESC;
+
+4.	List only those planes that have an engine that is 'Reciprocating'
+
+SELECT tailnum, year, type, manufacturer, model, engines, seats, speed,engine
+  FROM planes
+  WHERE engine = 'Reciprocating';
+
+5.	List only the first 5 rows in the flights table
+
+SELECT year, month, day, dep_time, dep_delay, arr_time, arr_delay, carrier, 
+       tailnum, flight, origin, dest, air_time, distance, hour, minute
+  FROM flights
+  LIMIT 5;
+
+6.	What was the longest (non-blank) air time?
+
+SELECT max(air_time)
+  FROM flights;
+
+ 
+7.	What was the shortest (non-blank) air time for Delta?
+
+SELECT min (air_time)
+  FROM flights
+  WHERE carrier = 'DL';
+
+8.	Show all of the Alaska Airlines flights between June 1st, 2013 and June 3rd, 2013. Is the way the data is stored in the database helpful to you in making your query?
+
+SELECT * 
+  FROM flights 
+ WHERE carrier = 'AS' 
+   AND year = 2013 AND month = 6 AND day >= 1 AND day <= 3;
+
+9.	Show all of the airlines whose names contain 'America'
+
+SELECT * 
+FROM airlines 
+WHERE name LIKE '%America%';
+
+10.	How many flights went to Miami?
+
+SELECT COUNT(*) 
+FROM flights 
+WHERE dest = 'MIA';
+
+
+11.	Were there more flights to Miami in January 2013 or July 2013? (Multiple queries are OK)
+
+SELECT COUNT(*) 
+FROM flights 
+WHERE dest = 'MIA' AND year = 2013 AND month = 7;
+
+12.	What is the average altitude of airports? 
+
+	SELECT AVG(alt) FROM airports;
+
+13.	What is the average altitude of the three major New York airports?
+
+	SELECT AVG(alt) FROM airports WHERE faa IN ('EWR','LGA','JFK')
+
+14.	What is the average altitude for airports grouped by timezone.  Which timezone has the highest altitude? Why
+
+SELECT tz, AVG(alt) 
+FROM airports
+GROUP BY tz
+ORDER BY tz;
+15.	Which of these four airplanes made the most flights out of New York City airports in 2013? Plane tailnums: 'N125UW','N848MQ','N328AA','N247JB'
+
+SELECT tailnum, COUNT(*)
+FROM flights WHERE tailnum IN ('N125UW','N848MQ','N328AA','N247JB')
+GROUP BY tailnum
+ORDER BY COUNT(*) DESC;
+
+16.	For each of these four planes, show the corresponding meta-data (model, manufacturer, engines, etc.) about each plane? What is surprising about the information returned? How do you think this could happen?
+
+SELECT * 
+FROM planes
+WHERE tailnum IN ('N125UW','N848MQ','N328AA','N247JB');
+
+	The meta data for the model = ‘N848MQ’ does not exist in the planes database.
+
+17.	Write a SELECT statement that shows for all of the flights during the period February 14th to February 17th for each of the four planes above: ‘N125UW’,’N848MQ’,’N328AA’,’N247JB’. Your select statement should return the following information: tailnum, flight date information, departure delay, arrival delay, 3 digit destination code
+
+SELECT tailnum, year, month, day, dep_delay, arr_delay, dest
+FROM flights 
+WHERE year = 2013 AND month = 2 AND day BETWEEN 14 AND 17 AND
+      tailnum IN ('N125UW','N848MQ','N328AA','N247JB')
+ORDER BY tailnum;
+
+
+18.	Add a join clause, to also show destination airport name. How many rows were returned?
+
+SELECT tailnum, year, month, day, dep_delay, arr_delay, dest, airports.name
+FROM flights JOIN airports
+ON flights.dest = airports.faa
+WHERE flights.year = 2013 AND month = 2 AND day BETWEEN 14 AND 17 AND
+      flights.tailnum IN ('N125UW','N848MQ','N328AA','N247JB')
+ORDER BY flights.tailnum;
+
+
+19.	Rewrite the join as a left join, and compare your results.
+
+SELECT tailnum, year, month, day, dep_delay, arr_delay, dest, airports.name
+FROM flights LEFT JOIN airports
+ON flights.dest = airports.faa
+WHERE flights.year = 2013 AND month = 2 AND day BETWEEN 14 AND 17 AND
+      flights.tailnum IN ('N125UW','N848MQ','N328AA','N247JB')
+ORDER BY flights.tailnum;
+20.	Add a second left join clause to also show the number of seats in the planes
+
+SELECT flights.tailnum, flights.year, month, day, dep_delay, arr_delay, dest, airports.name, planes.seats
+FROM flights
+LEFT JOIN airports ON flights.dest = airports.faa 
+LEFT JOIN planes ON flights.tailnum = planes.tailnum
+WHERE flights.year = 2013 AND month = 2 AND day BETWEEN 14 AND 17 AND
+      flights.tailnum IN ('N125UW','N848MQ','N328AA','N247JB')
+ORDER BY flights.tailnum;
+
+
+21.	Rewrite your query, using table aliases. (Results unchanged from above). Do you find the code more readable with or without table aliases?
+
+SELECT f.tailnum, f.year, month, day, dep_delay, arr_delay, dest, a.name, p.seats
+FROM flights f
+LEFT JOIN airports a ON f.dest = a.faa 
+LEFT JOIN planes p ON f.tailnum = p.tailnum
+WHERE f.year = 2013 AND month = 2 AND day BETWEEN 14 AND 17 AND
+      f.tailnum IN ('N125UW','N848MQ','N328AA','N247JB')
+ORDER BY f.tailnum;
+
+22.	What are the names of the five airports that receive the most flights?
+
+SELECT airports.name, COUNT(*) FROM flights
+INNER JOIN airports
+ON flights.dest = airports.faa
+GROUP BY airports.name
+ORDER BY COUNT(*) DESC LIMIT 5;
+
+
+23.	What are American Airlines’ destination cities from the New York airports?
+
+SELECT DISTINCT airports.name AS airport
+ FROM flights JOIN airports
+   ON flights.dest = airports.faa
+   JOIN airlines
+   ON flights.carrier = airlines.carrier
+   WHERE airlines.name LIKE 'Am%'
+   ORDER BY airport;
+=======================
